@@ -24,6 +24,24 @@
 		<spring-boot-admin.version>2.0.4</spring-boot-admin.version>
 	</properties>
 
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<properties>
+				<env>dev</env>
+			</properties>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+		<profile>
+			<id>prd</id>
+			<properties>
+				<env>prd</env>
+			</properties>
+		</profile>
+	</profiles>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -33,48 +51,39 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>de.codecentric</groupId>
-			<artifactId>spring-boot-admin-starter-client</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>de.codecentric</groupId>
-			<artifactId>spring-boot-admin-starter-server</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.mybatis.spring.boot</groupId>
-			<artifactId>mybatis-spring-boot-starter</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-tomcat</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
-
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>de.codecentric</groupId>
-				<artifactId>spring-boot-admin-dependencies</artifactId>
-				<version>${spring-boot-admin.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-
+	
 	<build>
+		<!-- 默认情况下，
+		1、如果没有指定resources，目前认为自动会将classpath下的src/main/java下的.class文件
+			和src/main/resources下的.xml文件放到target里头的classes文件夹下的package下的文件夹里；
+		2、如果设定了resources，那么默认的就会失效，就会以指定的includes和excludes为准；
+		3、targetPath:指定build资源到哪个目录，默认是base directory；
+		4、filtering:指定是否将filter文件(即build下的filters里定义的*.property文件)的变量值在这个resource文件有效,
+			例如上面就指定那些变量值在configuration文件无效；
+		5、directory:指定属性文件的目录，build的过程需要找到它，并且将其放到targetPath下，
+			默认的directory是${basedir}/src/main/resources；
+		6、includes:指定包含文件的patterns,符合样式并且在directory目录下的文件将会包含进project的资源文件。
+		7、excludes:指定不包含在内的patterns,如果inclues与excludes有冲突，那么excludes胜利，那些符合冲突的样式的文件是不会包含进来的。
+		8、testResources:这个模块包含测试资源元素，其内容定义与resources类似，不同的一点是默认的测试资源路径是${basedir}/src/test/resources,
+			测试资源是不部署的。 -->
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+				<excludes>
+					<exclude>conf/**</exclude>
+				</excludes>
+			</resource>
+			<resource>
+				<directory>src/main/resources/conf/${env}</directory>
+				<filtering>false</filtering>
+				<includes>
+					<include>**/*</include>
+				</includes>
+			</resource>
+		</resources>
+		
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -89,6 +98,5 @@
 			</plugin>
 		</plugins>
 	</build>
-
 
 </project>
