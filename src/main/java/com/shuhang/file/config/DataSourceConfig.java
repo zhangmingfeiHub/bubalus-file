@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import com.alibaba.druid.pool.DruidDataSource;
 
 /**
- * 自定义数据源
+ * 自定义数据源，注册到容器中会自动覆盖springboot默认的自动数据源配置
  * 
  * @author mingfei.z 2018年11月4日 下午8:49:56
  */
