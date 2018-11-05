@@ -1,0 +1,22 @@
+{"properties": [
+  {
+    "name": "bubalus.access.url",
+    "type": "java.lang.String",
+    "description": "A description for 'bubalus.access.url'"
+  },
+  {
+    "name": "bubalus.upload.url",
+    "type": "java.lang.String",
+    "description": "A description for 'bubalus.upload.url'"
+  },
+  {
+    "name": "bubalus.file.server.domain",
+    "type": "java.lang.String",
+    "description": "A description for 'bubalus.file.server.domain'"
+  },
+  {
+    "name": "bubalus.access.url-prefix",
+    "type": "java.lang.String",
+    "description": "A description for 'bubalus.access.url-prefix'"
+  }
+]}

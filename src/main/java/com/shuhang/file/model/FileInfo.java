@@ -16,6 +16,8 @@ public class FileInfo implements Serializable {
 
     private String fromSource;
 
+    private String path;
+
     private String url;
 
     private Date createDate;
@@ -74,6 +76,14 @@ public class FileInfo implements Serializable {
 
     public void setFromSource(String fromSource) {
         this.fromSource = fromSource == null ? null : fromSource.trim();
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path == null ? null : path.trim();
     }
 
     public String getUrl() {

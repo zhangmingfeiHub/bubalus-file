@@ -3,15 +3,29 @@
  */
 package com.shuhang.file.controller;
 
+import java.io.File;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.shuhang.file.constants.JsonResult;
+import com.shuhang.file.enums.StatementEnum;
 import com.shuhang.file.model.FileInfo;
+import com.shuhang.file.model.vo.FileInfoVo;
 import com.shuhang.file.service.FileUploadService;
+import com.shuhang.file.utils.DateUtils;
+import com.shuhang.file.utils.JsonUtils;
+import com.shuhang.file.utils.StringUtils;
 
 @Controller
 @RequestMapping("/file")
@@ -19,30 +33,82 @@ public class FileUploadController {
 
 	private final static Logger logger = LoggerFactory.getLogger(FileUploadController.class);
 
+	@Value("${bubalus.access.url-prefix}")
+	private String accessUrlPrefix;
+	@Value("${bubalus.upload.url}")
+	private String uploadUrl;
+	@Value("${bubalus.file.server.domain}")
+	private String fileServerDomain;
+	
 	@Autowired
 	private FileUploadService fileUploadService;
 	
-	@RequestMapping("/upload")
+	@RequestMapping(value = "/upload", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
-	public String upload() {
+	public JsonResult<FileInfoVo> upload(@RequestParam("file") MultipartFile file) {
 		
-		FileInfo fileInfo = new FileInfo();
-		fileInfo.setOriginName("A");
-		fileInfo.setTransferName("B");
-		fileInfo.setSuffix("txt");
-		fileInfo.setUrl("ddddddd");
-		fileInfo.setFromSource("HD");
-		fileInfo.setSize(10 * 1024);
+		logger.info("文件上传开始！");
 		
-		logger.info(fileInfo.toString());
+		// 判断文件是否为空
+		if (file.isEmpty())
+			return JsonResult.error(StatementEnum.ERROR_FILE_EMPTY);
+		
+		// 获取文件名称
+		String originName = file.getOriginalFilename();
+		
+		// 文件后缀
+		String suffix = originName.substring(originName.lastIndexOf("."));
+		
+		// 重新生成唯一文件名，用于存储数据库
+		String transferName = StringUtils.getRandomNumAndString(32) + suffix;
+		
+		// 文件大小
+		long size = file.getSize();
+		
+		// 文件上传绝对路径
+		StringBuilder filePathSb = new StringBuilder();
+		filePathSb.append(DateUtils.getYearString())
+				.append(File.separator)
+				.append(DateUtils.getMonthString())
+				.append(File.separator)
+				.append(DateUtils.getDayString())
+				.append(File.separator);
+		String filePath = filePathSb.toString();
+		//创建文件
+		File dest = new File(uploadUrl + File.separator + filePath + transferName);
+		// 判断文件是否存在
+		if (dest.exists()) 
+			return JsonResult.error(StatementEnum.ERROR_FILE_EXISTS);
+		
+		// 判断父级目录是否存在
+		if (!dest.getParentFile().exists()) 
+			dest.getParentFile().mkdirs();
+		
 		try {
 			
+			file.transferTo(dest); // 保存文件
+			
+			FileInfo fileInfo = new FileInfo();
+			fileInfo.setOriginName(originName);
+			fileInfo.setTransferName(transferName);
+			fileInfo.setSuffix(suffix);
+			fileInfo.setPath(dest.getPath());
+			fileInfo.setUrl((fileServerDomain + accessUrlPrefix + filePath + transferName).replace("\\", "/"));
+			fileInfo.setFromSource("");
+			fileInfo.setSize((int)size);
+
 			fileUploadService.insert(fileInfo);
+			
+			logger.info("文件上传，文件信息={}", JsonUtils.objectToJson(fileInfo, false));
+			FileInfoVo fileInfoVo = new FileInfoVo();
+			BeanUtils.copyProperties(fileInfo, fileInfoVo);
+			
+			logger.info("文件上传结束！");
+			return JsonResult.success(fileInfoVo);
 		} catch (Exception e) {
-			logger.error("发生异常", e);
+			logger.error("文件上传发生异常", e);
+			return JsonResult.error(StatementEnum.ERROR_FILE_UPLOAD_FAIL);
 		}
-		
-		return "success";
 	}
 	
 }

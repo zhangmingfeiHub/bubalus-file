@@ -46,3 +46,15 @@ pagehelper:
   helper-dialect: mysql
   reasonable: true
   support-methods-arguments: true
+
+bubalus:
+  # 对外暴露文件访问路径
+  access: 
+    url: /api/file/**
+    url-prefix: /api/file/
+  # 上传路径，即文件存放路径
+  upload: 
+    url : E:\mingfei.zhang\work\upload\
+  file: 
+    server: 
+      domain: http://file.bubalus.dev.com:61001/

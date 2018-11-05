@@ -8,6 +8,7 @@
     <result column="suffix" jdbcType="VARCHAR" property="suffix" />
     <result column="size" jdbcType="INTEGER" property="size" />
     <result column="from_source" jdbcType="VARCHAR" property="fromSource" />
+    <result column="path" jdbcType="VARCHAR" property="path" />
     <result column="url" jdbcType="VARCHAR" property="url" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
     <result column="create_operator" jdbcType="VARCHAR" property="createOperator" />
@@ -44,8 +45,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, origin_name, transfer_name, suffix, `size`, from_source, url, create_date, create_operator, 
-    update_date, update_operator
+    id, origin_name, transfer_name, suffix, `size`, from_source, `path`, url, create_date, 
+    create_operator, update_date, update_operator
   </sql>
   <select id="selectByExample" parameterType="com.shuhang.file.model.FileInfoExample" resultMap="BaseResultMap">
     select
@@ -74,13 +75,13 @@
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.shuhang.file.model.FileInfo" useGeneratedKeys="true">
     insert into file_info (origin_name, transfer_name, suffix, 
-      `size`, from_source, url, 
-      create_date, create_operator, update_date, 
-      update_operator)
+      `size`, from_source, `path`, 
+      url, create_date, create_operator, 
+      update_date, update_operator)
     values (#{originName,jdbcType=VARCHAR}, #{transferName,jdbcType=VARCHAR}, #{suffix,jdbcType=VARCHAR}, 
-      #{size,jdbcType=INTEGER}, #{fromSource,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, 
-      #{createDate,jdbcType=TIMESTAMP}, #{createOperator,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, 
-      #{updateOperator,jdbcType=VARCHAR})
+      #{size,jdbcType=INTEGER}, #{fromSource,jdbcType=VARCHAR}, #{path,jdbcType=VARCHAR}, 
+      #{url,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{createOperator,jdbcType=VARCHAR}, 
+      #{updateDate,jdbcType=TIMESTAMP}, #{updateOperator,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.shuhang.file.model.FileInfo" useGeneratedKeys="true">
     insert into file_info
@@ -99,6 +100,9 @@
       </if>
       <if test="fromSource != null">
         from_source,
+      </if>
+      <if test="path != null">
+        `path`,
       </if>
       <if test="url != null">
         url,
@@ -131,6 +135,9 @@
       </if>
       <if test="fromSource != null">
         #{fromSource,jdbcType=VARCHAR},
+      </if>
+      <if test="path != null">
+        #{path,jdbcType=VARCHAR},
       </if>
       <if test="url != null">
         #{url,jdbcType=VARCHAR},
@@ -173,6 +180,9 @@
       <if test="fromSource != null">
         from_source = #{fromSource,jdbcType=VARCHAR},
       </if>
+      <if test="path != null">
+        `path` = #{path,jdbcType=VARCHAR},
+      </if>
       <if test="url != null">
         url = #{url,jdbcType=VARCHAR},
       </if>
@@ -198,6 +208,7 @@
       suffix = #{suffix,jdbcType=VARCHAR},
       `size` = #{size,jdbcType=INTEGER},
       from_source = #{fromSource,jdbcType=VARCHAR},
+      `path` = #{path,jdbcType=VARCHAR},
       url = #{url,jdbcType=VARCHAR},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       create_operator = #{createOperator,jdbcType=VARCHAR},
