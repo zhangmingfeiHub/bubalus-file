@@ -34,6 +34,12 @@ spring:
       #打开PSCache，并指定每个连接上PSCache的大小。oracle设为true，mysql设为false。分库分表较多推荐设置为false
       pool-prepared-statements: false
       max-pool-prepared-statement-per-connection-size: 20
+  
+  # 上传配置
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 500MB
     
 # mybatis
 mybatis:
@@ -46,6 +52,7 @@ pagehelper:
   helper-dialect: mysql
   reasonable: true
   support-methods-arguments: true
+  
 
 bubalus:
   # 对外暴露文件访问路径
