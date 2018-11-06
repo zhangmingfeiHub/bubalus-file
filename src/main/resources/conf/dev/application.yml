@@ -40,6 +40,14 @@ spring:
     multipart:
       max-file-size: 50MB
       max-request-size: 500MB
+      
+  # redis
+  redis:
+    database: 0 # Redis数据库索引（默认为0）
+    host: 127.0.0.1 # Redis服务器地址 （默认为127.0.0.1）
+    port: 51002 # Redis服务器连接端口 （默认为6379）
+    password: # Redis服务器连接密码（默认为空）
+    timeout: 2000 # 连接超时时间（毫秒）
     
 # mybatis
 mybatis:
@@ -58,10 +66,7 @@ bubalus:
   # 对外暴露文件访问路径
   access: 
     url: /api/file/**
-    url-prefix: /api/file/
+    domain: http://www.file-dev.com:51001/
   # 上传路径，即文件存放路径
   upload: 
     url : E:\mingfei.zhang\work\upload\
-  file: 
-    server: 
-      domain: http://file.bubalus.dev.com:61001/

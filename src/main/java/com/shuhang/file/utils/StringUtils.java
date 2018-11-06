@@ -78,6 +78,17 @@ public class StringUtils extends org.springframework.util.StringUtils {
 		return RandomStringUtils.random(length, key);
 	}
 	
+	/**
+	 * 判断字符串不为null 或 空字符串
+	 * 
+	 * @param str
+	 * @return
+	 * @author mingfei.z 2018年11月6日 下午3:58:34
+	 */
+	public static boolean isNotBlank(String str) {
+		return !isEmpty(str);
+	}
+	
 //	public static void main(String[] args) {
 //		String string = getRandomNumAndString(26);
 //		System.out.println(string);

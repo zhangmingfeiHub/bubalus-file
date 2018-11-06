@@ -4,12 +4,14 @@
 package com.shuhang.file.controller;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,15 +35,15 @@ public class FileUploadController {
 
 	private final static Logger logger = LoggerFactory.getLogger(FileUploadController.class);
 
-	@Value("${bubalus.access.url-prefix}")
-	private String accessUrlPrefix;
 	@Value("${bubalus.upload.url}")
 	private String uploadUrl;
-	@Value("${bubalus.file.server.domain}")
-	private String fileServerDomain;
+	@Value("${bubalus.access.domain}")
+	private String accessDomain;
 	
 	@Autowired
 	private FileUploadService fileUploadService;
+	@Autowired
+	private StringRedisTemplate redisTemplate;
 	
 	@RequestMapping(value = "/upload", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
@@ -67,7 +69,11 @@ public class FileUploadController {
 		
 		// 文件上传绝对路径
 		StringBuilder filePathSb = new StringBuilder();
-		filePathSb.append(DateUtils.getYearString())
+		filePathSb.append("api")
+				.append(File.separator)
+				.append("file")
+				.append(File.separator)
+				.append(DateUtils.getYearString())
 				.append(File.separator)
 				.append(DateUtils.getMonthString())
 				.append(File.separator)
@@ -86,6 +92,13 @@ public class FileUploadController {
 		
 		try {
 			
+			String fileJson = redisTemplate.opsForValue().get("file");
+			if (StringUtils.isNotBlank(fileJson)) {
+				logger.info("文件上传，redis缓存");
+				FileInfoVo fileInfoVo = JsonUtils.jsonToObject(fileJson, FileInfoVo.class);
+				return JsonResult.success(fileInfoVo);
+			}
+			
 			file.transferTo(dest); // 保存文件
 			
 			FileInfo fileInfo = new FileInfo();
@@ -93,7 +106,7 @@ public class FileUploadController {
 			fileInfo.setTransferName(transferName);
 			fileInfo.setSuffix(suffix);
 			fileInfo.setPath(dest.getPath());
-			fileInfo.setUrl((fileServerDomain + accessUrlPrefix + filePath + transferName).replace("\\", "/"));
+			fileInfo.setUrl((accessDomain + filePath + transferName).replace("\\", "/"));
 			fileInfo.setFromSource("");
 			fileInfo.setSize((int)size);
 
@@ -102,6 +115,9 @@ public class FileUploadController {
 			logger.info("文件上传，文件信息={}", JsonUtils.objectToJson(fileInfo, false));
 			FileInfoVo fileInfoVo = new FileInfoVo();
 			BeanUtils.copyProperties(fileInfo, fileInfoVo);
+
+			// redis
+			redisTemplate.opsForValue().set("file", JsonUtils.objectToJson(fileInfoVo, false), 2, TimeUnit.HOURS);
 			
 			logger.info("文件上传结束！");
 			return JsonResult.success(fileInfoVo);
