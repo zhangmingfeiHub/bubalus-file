@@ -19,7 +19,13 @@ public enum StatementEnum {
 	/** 51002 - 文件已存在 */
 	ERROR_FILE_EXISTS("51002", "文件已存在"),
 	/** 51003 - 文件上传失败 */
-	ERROR_FILE_UPLOAD_FAIL("51003", "文件上传失败");
+	ERROR_FILE_UPLOAD_FAIL("51003", "文件上传失败"),
+	/** 41001 - 参数错误 */
+	ERROR_TOKEN_PARAM("41001", "参数错误"),
+	/** 41002 - appId不存在 */
+	ERROR_TOKEN_APPID_NO_EXISTS("41002", "appId不存在"),
+	/** 41003 - appSecret错误 */
+	ERROR_TOKEN_APPSECRET("41003", "appSecret错误");
 	
 	private String code;
 	private String message;

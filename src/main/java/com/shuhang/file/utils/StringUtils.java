@@ -100,6 +100,13 @@ public class StringUtils extends org.springframework.util.StringUtils {
 //		System.out.println(string2);
 //		String string3 = getRandomString("DFG", 20);
 //		System.out.println(string3);
+//		
+//		String str = "15_ZTvGmpaZLhmAf9Litwq_40TZ14YtWUo8JOE2BDcZywQ4BqHR7ysqT0s09w5IjOU0apJmBg8JT2JCyHyBdVbnGT-Ca2_hK63WFQ2fQ6xkmV0ZFiGiwnRn-H62Pzv8huEBkEw5eIgXhQ-hu9K4DEYdAIAWXR";
+//		System.out.println("str length: " + str.length() + ", " + str);
+//		String[] strArr = str.split("_");
+//		for (String s : strArr) {
+//			System.out.println("str length: " + s.length() + ", " + s);
+//		}
 //	}
 	
 }
