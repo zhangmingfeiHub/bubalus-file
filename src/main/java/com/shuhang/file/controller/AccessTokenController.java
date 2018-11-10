@@ -5,6 +5,7 @@ package com.shuhang.file.controller;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,9 +14,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shuhang.file.constants.Constants;
 import com.shuhang.file.enums.StatementEnum;
 import com.shuhang.file.model.ClientApp;
 import com.shuhang.file.service.AccessTokenService;
+import com.shuhang.file.service.RedisService;
+import com.shuhang.file.utils.AlgUtils;
+import com.shuhang.file.utils.CommonUtils;
 import com.shuhang.file.utils.JsonUtils;
 import com.shuhang.file.utils.StringUtils;
 
@@ -55,18 +60,20 @@ public class AccessTokenController {
 	
 	@Autowired
 	private AccessTokenService accessTokenService;
+	@Autowired
+	private RedisService redisService;
 	
 	/**
-	 * 获取token
+	 * 获取token，每次生成不同
 	 * @param appId 客户端唯一标识
 	 * @param appSecret 客户端公钥
 	 * @return
 	 * @author mingfei.z
 	 */
-	@RequestMapping(value = "/getAccessToken", method = RequestMethod.POST)
-	public String getAccessToken(String appId, String appSecret) {
+	@RequestMapping(value = "/accessToken", method = RequestMethod.POST)
+	public Map<String, Object> accessToken(String appId, String appSecret) {
 		
-		Map<String, String> resultMap = new HashMap<>();
+		Map<String, Object> resultMap = new HashMap<>();
 		if (StringUtils.isEmpty(appId) || StringUtils.isEmpty(appSecret)) {
 			resultMap.put("code", StatementEnum.ERROR_TOKEN_PARAM.getCode());
 			resultMap.put("desc", StatementEnum.ERROR_TOKEN_PARAM.getMessage());
@@ -81,12 +88,31 @@ public class AccessTokenController {
 					resultMap.put("desc", StatementEnum.ERROR_TOKEN_APPSECRET.getMessage());
 				} else {
 					Map<String, String> appIdMap = new HashMap<>();
-					appIdMap.put("appId", value);
+					appIdMap.put("appId", clientApp.getAppId());
+					String appIdJson = JsonUtils.objectToJson(appIdMap, false);
+					String appIdEncode = AlgUtils.base64Encode(appIdJson);
+					
+					Map<String, String> clientMap = new HashMap<>();
+					clientMap.put("appName", clientApp.getAppName());
+					clientMap.put("appDesc", clientApp.getAppDesc());
+					String clientJson = JsonUtils.objectToJson(clientMap, false);
+					String clientEncode = AlgUtils.base64Encode(clientJson);
+					
+					String md5Encode = AlgUtils.md5Encode(appIdEncode + clientEncode + clientApp.getPriSecret());
+					
+					String accessToken = appIdEncode + Constants.SEPARATOR.UNDERLINE + clientEncode + Constants.SEPARATOR.UNDERLINE + md5Encode;
+					int timeout = 2;
+					// key = appId_priSecret
+					redisService.set(clientApp.getAppId() + Constants.SEPARATOR.UNDERLINE + clientApp.getPriSecret(), accessToken, timeout, TimeUnit.HOURS);
+					
+					resultMap.put("access_token", accessToken);
+					resultMap.put("expiry_date", CommonUtils.getSeconds(timeout, TimeUnit.HOURS));
 				}
 			}
 		}
 		
-		return JsonUtils.objectToJson(resultMap, false);
+		logger.info("生成token，appId={}，appSecret={}，token={}", appId, appSecret, resultMap.get("access_token"));
+		return resultMap;
 	}
 	
 }
