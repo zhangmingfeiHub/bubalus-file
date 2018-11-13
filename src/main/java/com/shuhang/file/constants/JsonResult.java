@@ -27,6 +27,10 @@ public class JsonResult<T> {
 		return newInstance(statementEnum.getCode(), statementEnum.getMessage(), data);
 	}
 
+	public static <T> JsonResult<T> success(String message, T data) {
+		return newInstance(StatementEnum.SUCCESS.getCode(), message, data);
+	}
+
 	public static <T> JsonResult<T> error(T data) {
 		return error(StatementEnum.ERROR, data);
 	}
@@ -38,7 +42,11 @@ public class JsonResult<T> {
 	public static <T> JsonResult<T> error(StatementEnum statementEnum, T data) {
 		return newInstance(statementEnum.getCode(), statementEnum.getMessage(), data);
 	}
-	
+
+	public static <T> JsonResult<T> error(String code, String message) {
+		return newInstance(code, message, null);
+	}
+
 	public static <T> JsonResult<T> newInstance(String code, String message, T data) {
 		JsonResult<T> jsonResult = new JsonResult<>();
 		jsonResult.setCode(code);

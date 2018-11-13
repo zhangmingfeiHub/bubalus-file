@@ -23,26 +23,22 @@
 				<div class="myapp-login-logo-text">
 					<span>文件系统</span>管理后台
 				</div>
-				
-				<form class="layui-form" action="" lay-filter="example">
-				  <div class="layui-form-item">
-				    <label class="layui-form-label">输入框</label>
-				    <div class="layui-input-block">
-				      <input type="text" name="username" lay-verify="title" autocomplete="off" placeholder="请输入标题" class="layui-input">
-				    </div>
-				  </div>
-				  <div class="layui-form-item">
-				    <label class="layui-form-label">密码框</label>
-				    <div class="layui-input-block">
-				      <input type="password" name="password" placeholder="请输入密码" autocomplete="off" class="layui-input">
-				    </div>
-				  </div>
-				  <div class="layui-form-item">
-				    <div class="layui-input-block">
-				      <button class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
-				    </div>
-				  </div>
-				</form>
+				<div class="myapp-login-form">
+					<form class="layui-form" action="" lay-filter="example">
+					  <div class="layui-form-item">
+					    <input type="text" name="username" lay-verify="title" autocomplete="off" placeholder="请输入用户名" class="layui-input">
+					  </div>
+					  <div class="layui-form-item">
+					    <input type="password" name="password" placeholder="请输入密码" autocomplete="off" class="layui-input">
+					  </div>
+					  <div class="layui-form-item">
+					    <button class="layui-btn layui-btn-warm layui-btn-fluid" lay-submit="" lay-filter="demo1">登录</button>
+					  </div>
+					</form>
+				</div>
+				<div class="myapp-login-footer">
+					<span>@copyright shuhang ${.now?string["yyyy"] }</span>
+				</div>
 			</div>
 		</div>
 	</body>
