@@ -72,6 +72,7 @@
 		<pagehelper-spring-boot-starter.version>1.2.9</pagehelper-spring-boot-starter.version>
 		<!-- shiro -->
 		<shiro.version>1.3.2</shiro.version>
+		<shiro-spring-boot-starter.version>1.4.0</shiro-spring-boot-starter.version>
 	</properties>
 
 	<dependencies>
@@ -153,10 +154,15 @@
         </dependency>
         
         <!-- shiro -->
-        <dependency>
+        <!-- <dependency>
 		  <groupId>org.apache.shiro</groupId>
 		  <artifactId>shiro-core</artifactId>
 		  <version>${shiro.version}</version>
+		</dependency> -->
+		<dependency>
+		    <groupId>org.apache.shiro</groupId>
+		    <artifactId>shiro-spring-boot-starter</artifactId>
+		    <version>${shiro-spring-boot-starter.version}</version>
 		</dependency>
 
 	</dependencies>

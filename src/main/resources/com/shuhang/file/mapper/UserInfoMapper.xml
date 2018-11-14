@@ -229,4 +229,19 @@
       update_operator = #{updateOperator,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+    
+    <select id="getUserInfoByCondition" resultMap="BaseResultMap">
+        SELECT t.id,
+               t.open_id,
+               t.mobile,
+               t.account,
+               t.user_name,
+               t.nick_name,
+               t.`password`,
+               t.remark
+          FROM user_info t
+         WHERE t.delete_status = 0
+           AND (t.mobile = #{param} OR t.account = #{param})
+    </select>
+    
 </mapper>

@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS `user_info` (
   `update_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_operator` varchar(100) NOT NULL DEFAULT '' COMMENT '创建者',
   PRIMARY KEY (`id`),
-	UNIQUE KEY `unq_open_id` (`open_id`),
-	UNIQUE KEY `unq_mobile` (`mobile`),
-	UNIQUE KEY `unq_account` (`account`)
+	KEY `key_open_id` (`open_id`),
+	KEY `key_mobile` (`mobile`),
+	KEY `key_account` (`account`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户信息';
